@@ -133,7 +133,6 @@ public class FeedParser {
     ) async throws -> Feed {
         try await withCheckedThrowingContinuation { continuation in
             parseAsync(queue: queue) { result in
-                let result = self.parse()
                 continuation.resume(with: result)
             }
         }
