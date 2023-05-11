@@ -90,23 +90,25 @@ class RFC822DateFormatter: DateFormatter {
 }
 
 private extension String {
-    mutating func cleanDate() -> String {
-        self = replacingOccurrences(of: "lun,", with: "mon,", options: .caseInsensitive)
-        self = replacingOccurrences(of: "mar,", with: "tue,", options: .caseInsensitive)
-        self = replacingOccurrences(of: "mer,", with: "wed,", options: .caseInsensitive)
-        self = replacingOccurrences(of: "gio,", with: "thu,", options: .caseInsensitive)
-        self = replacingOccurrences(of: "ven,", with: "fri,", options: .caseInsensitive)
-        self = replacingOccurrences(of: "sab,", with: "sat,", options: .caseInsensitive)
-        self = replacingOccurrences(of: "dom,", with: "sun,", options: .caseInsensitive)
-        self = replacingOccurrences(of: "gen", with: "jan", options: .caseInsensitive)
-        self = replacingOccurrences(of: "mag", with: "may", options: .caseInsensitive)
-        self = replacingOccurrences(of: "giu", with: "jun", options: .caseInsensitive)
-        self = replacingOccurrences(of: "lug", with: "jul", options: .caseInsensitive)
-        self = replacingOccurrences(of: "ago", with: "aug", options: .caseInsensitive)
-        self = replacingOccurrences(of: "set", with: "sep", options: .caseInsensitive)
-        self = replacingOccurrences(of: "ott", with: "oct", options: .caseInsensitive)
-        self = replacingOccurrences(of: "nov", with: "nov", options: .caseInsensitive)
-        self = replacingOccurrences(of: "dic", with: "dec", options: .caseInsensitive)
-        return self
+    func cleanDate() -> String {
+        var newString = self
+        newString = newString.replacingOccurrences(of: "lun,", with: "mon,", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "mar,", with: "tue,", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "mer,", with: "wed,", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "gio,", with: "thu,", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "ven,", with: "fri,", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "sab,", with: "sat,", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "dom,", with: "sun,", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "gen", with: "jan", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "mag", with: "may", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "giu", with: "jun", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "lug", with: "jul", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "ago", with: "aug", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "set", with: "sep", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "ott", with: "oct", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "nov", with: "nov", options: .caseInsensitive)
+        newString = newString.replacingOccurrences(of: "dic", with: "dec", options: .caseInsensitive)
+        return newString
     }
 }
+
