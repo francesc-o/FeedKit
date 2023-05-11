@@ -38,7 +38,9 @@ class RFC822DateFormatter: DateFormatter {
     let backupFormats = [
         "d MMM yyyy HH:mm:ss zzz",
         "d MMM yyyy HH:mm zzz",
-        "EEE, dd MMM yyyy, HH:mm:ss zzz"
+        "EEE, dd MMM yyyy, HH:mm:ss zzz",
+        "EEE, d MMM yyyy, HH:mm:ss zzz",
+        "EEE, d MMM yyyy HH:mm:ss"
     ]
 
     override init() {
@@ -66,6 +68,16 @@ class RFC822DateFormatter: DateFormatter {
         if let parsedDate = attemptParsing(from: string, formats: dateFormats) {
             return parsedDate
         }
+        
+        // Fix for some Italian feeds
+        let cleaned = string.cleanDate()
+        if let parsedDate = attemptParsing(from: cleaned, formats: dateFormats) {
+            return parsedDate
+        }
+        if let parsedDate = attemptParsing(from: cleaned, formats: backupFormats) {
+            return parsedDate
+        }
+        
         // See if we can lop off a text weekday, as DateFormatter does not
         // handle these in full compliance with Unicode tr35-31. For example,
         // "Tues, 6 November 2007 12:00:00 GMT" is rejected because of the "Tues",
@@ -75,5 +87,26 @@ class RFC822DateFormatter: DateFormatter {
             range: NSMakeRange(0, string.count), withTemplate: "$1")
         return attemptParsing(from: trimmed, formats: backupFormats)
     }
-    
+}
+
+private extension String {
+    mutating func cleanDate() -> String {
+        self = replacingOccurrences(of: "lun,", with: "mon,", options: .caseInsensitive)
+        self = replacingOccurrences(of: "mar,", with: "tue,", options: .caseInsensitive)
+        self = replacingOccurrences(of: "mer,", with: "wed,", options: .caseInsensitive)
+        self = replacingOccurrences(of: "gio,", with: "thu,", options: .caseInsensitive)
+        self = replacingOccurrences(of: "ven,", with: "fri,", options: .caseInsensitive)
+        self = replacingOccurrences(of: "sab,", with: "sat,", options: .caseInsensitive)
+        self = replacingOccurrences(of: "dom,", with: "sun,", options: .caseInsensitive)
+        self = replacingOccurrences(of: "gen", with: "jan", options: .caseInsensitive)
+        self = replacingOccurrences(of: "mag", with: "may", options: .caseInsensitive)
+        self = replacingOccurrences(of: "giu", with: "jun", options: .caseInsensitive)
+        self = replacingOccurrences(of: "lug", with: "jul", options: .caseInsensitive)
+        self = replacingOccurrences(of: "ago", with: "aug", options: .caseInsensitive)
+        self = replacingOccurrences(of: "set", with: "sep", options: .caseInsensitive)
+        self = replacingOccurrences(of: "ott", with: "oct", options: .caseInsensitive)
+        self = replacingOccurrences(of: "nov", with: "nov", options: .caseInsensitive)
+        self = replacingOccurrences(of: "dic", with: "dec", options: .caseInsensitive)
+        return self
+    }
 }
