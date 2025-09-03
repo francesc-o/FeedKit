@@ -75,6 +75,9 @@ public class FeedParser {
 
             do {
                 data = try Data(contentsOf: sanitizedSchemeUrl)
+                if url.absoluteString.contains("sport.sky") {
+                    data = try convertToUTF8(data: data, from: url)
+                }
             } catch {
                 return .failure(.internalError(reason: error.localizedDescription))
             }
@@ -144,4 +147,48 @@ public class FeedParser {
         xmlFeedParser.xmlParser.abortParsing()
     }
     
+    private func convertToUTF8(data: Data?, from url: URL) throws -> Data {
+        guard let data = data else {
+            throw NSError(
+                domain: "EncodingError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Data is nil"]
+            )
+        }
+        
+        var convertedString: String?
+                
+        if let string = String(data: data, encoding: .utf8) {
+            convertedString = string
+        }
+        
+        guard var string = convertedString else {
+            throw NSError(
+                domain: "EncodingError",
+                code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Unable to decode data with any supported encoding"]
+            )
+        }
+        
+        string = cleanXMLString(string)
+        
+        guard let utf8Data = string.data(using: .utf8) else {
+            throw NSError(
+                domain: "EncodingError",
+                code: -2,
+                userInfo: [NSLocalizedDescriptionKey: "Unable to convert string to UTF-8"]
+            )
+        }
+        
+        return utf8Data
+    }
+    
+    private func cleanXMLString(_ string: String) -> String {
+        var cleanedString = string
+        let invalidXMLCharacters = CharacterSet(
+            charactersIn: "\u{00}\u{01}\u{02}\u{03}\u{04}\u{05}\u{06}\u{07}\u{08}\u{0B}\u{0C}\u{0E}\u{0F}" + "\u{10}\u{11}\u{12}\u{13}\u{14}\u{15}\u{16}\u{17}\u{18}\u{19}\u{1A}\u{1B}\u{1C}\u{1D}\u{1E}\u{1F}"
+        )
+        cleanedString = cleanedString.components(separatedBy: invalidXMLCharacters).joined()
+        return cleanedString
+    }
 }
